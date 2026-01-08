@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grey calendar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --color1: #73706C;
+            --color2: #F2F2F2;
+            --color3: #BFBFBD;
+            --color4: #D8D9D7;
+        }
+        body {
+            background: var(--color2);
+        }
+        #main {
+            background: transparent;
+            height: auto;
+            width: 100vw;
+        }
+        #info {
+            color: var(--color1);
+            width: 100vw;
+            padding: 5vw 8vw;
+            font-family: Sans-Serif;
+        }
+        #info hr {
+            border: solid 1px var(--color4);
+        }
+        .month {
+            color: var(--color1);
+            width: 100vw;
+            padding: 5vw 8vw;
+            font-family: Sans-Serif;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: large;
+        }
+        .header {
+            display: grid;
+            grid-template-columns: repeat(7, calc(100% / 7));
+            border: solid 1px var(--color4);
+            border-bottom: none;
+        }
+        .header div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: solid 1px var(--color4);
+            border-bottom: none;
+            padding: 5%;
+            font-size: large;
+        }
+        .grid {
+            background: var(--color4);
+            display: grid;
+            grid-template-columns: repeat(7, calc(100% / 7));
+            grid-template-rows: repeat(6, auto);
+            border: solid 1px var(--color3);
+        }
+        .grid .day-div {
+            background: var(--color2);
+            border: solid 1px var(--color4);
+            aspect-ratio: 1;
+            padding: 5%;
+            font-size: medium;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="main">   
+        <!-- Implementado em script -->
+    </div>
+    
+    <section id="info">
+        <hr>
+        <br>
+        <h2>grey calendar</h2>
+        <br>
+        <p>© 2026 – Luís Dantas Marinho</p>
+        <a href="https://github.com/LuisDan29">GitHub</a>
+    </section>
+    
+    <script>
+        
+        const YEAR = 2026;
+        const DAYS = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+        const MONTHS = [
+            "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", 
+            "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+        ];
+        const MAIN_DIV = document.getElementById('main');
+        
+        
+        // implementar post-it system...
+        
+        
+        function createCalendar() {
+            for (let i = 0; i < MONTHS.length; i++) {
+                const monthDiv = document.createElement('div');
+                monthDiv.classList.add('month');
+                
+                monthDiv.innerHTML = `<h1 class="title"> ${ MONTHS[i] } </h1>`;
+                
+                let startDay = getDaysInMonth(i)[0];
+                let lastDay = getDaysInMonth(i)[1];
+                
+                const container = document.createElement('div');
+                const header = createHeader();
+                const grid = createGrid(startDay, lastDay);
+                container.appendChild(header);
+                container.appendChild(grid);
+                
+                monthDiv.appendChild(container);
+                MAIN_DIV.appendChild(monthDiv);
+            }
+        }
+        
+        function createHeader() {
+            const header = document.createElement('div');
+            header.classList.add('header');
+            // div's com dias da semana
+            DAYS.forEach(day => {
+                const div = document.createElement('div');
+                div.innerHTML = `<p>${day}</p>`;
+                header.appendChild(div);
+            })
+            return header;
+        }
+
+        function createGrid(startDay, lastDay) {
+            const grid = document.createElement('div');
+            grid.classList.add('grid');
+            // div's vazias no inicio do grid
+            for (let i = 0; i < startDay; i++) {
+                const div = document.createElement('div');
+                grid.appendChild(div);
+            }
+            // div's com dias do mês
+            let dayCount = 1;
+            for (let i = 0; i < lastDay; i++) {
+                const div = document.createElement('div');
+                div.classList.add('day-div');
+                div.innerHTML = `<p>${dayCount}</p>`;
+                grid.appendChild(div);
+                dayCount++;
+            }
+            return grid;
+        }
+        
+        createCalendar();
+        
+        
+        function getDaysInMonth(month) {
+            // new Date(ano, mês, dia, hora, ...)
+            let startDay = new Date(YEAR, month, 1);
+            let lastDay = new Date(YEAR, month + 1, 0);
+            // [primeiro dia, último dia]
+            return [startDay.getDay(), lastDay.getDate()];
+        }
+        
+    </script>
+</body>
+</html>

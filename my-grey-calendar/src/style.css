@@ -1,0 +1,78 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color1: #73706C;
+    --color2: #F2F2F2;
+    --color3: #BFBFBD;
+    --color4: #D8D9D7;
+}
+
+body {
+    background: var(--color2);
+}
+
+#main {
+    background: transparent;
+    height: auto;
+    width: 100vw;
+}
+
+#info {
+    color: var(--color1);
+    width: 100vw;
+    padding: 5vw 8vw;
+    font-family: Sans-Serif;
+}
+
+#info hr {
+    border: solid 1px var(--color4);
+}
+
+.month {
+    color: var(--color1);
+    width: 100vw;
+    padding: 5vw 8vw;
+    font-family: Sans-Serif;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: large;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: repeat(7, calc(100% / 7));
+    border: solid 1px var(--color4);
+    border-bottom: none;
+}
+
+.header div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid 1px var(--color4);
+    border-bottom: none;
+    padding: 5%;
+    font-size: large;
+}
+
+.grid {
+    background: var(--color4);
+    display: grid;
+    grid-template-columns: repeat(7, calc(100% / 7));
+    grid-template-rows: repeat(6, auto);
+    border: solid 1px var(--color4);
+}
+
+.grid .day-div {
+    background: var(--color2);
+    border: solid 1px var(--color4);
+    aspect-ratio: 1;
+    padding: 5%;
+    font-size: medium;
+}

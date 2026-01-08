@@ -101,9 +101,6 @@
         const MAIN_DIV = document.getElementById('main');
         
         
-        // implementar post-it system...
-        
-        
         function createCalendar() {
             for (let i = 0; i < MONTHS.length; i++) {
                 const monthDiv = document.createElement('div');
@@ -164,7 +161,7 @@
             // new Date(ano, mês, dia, hora, ...)
             let startDay = new Date(YEAR, month, 1);
             let lastDay = new Date(YEAR, month + 1, 0);
-            // [primeiro dia, último dia]
+            // [dia da semana 0-6, qntd de dias]
             return [startDay.getDay(), lastDay.getDate()];
         }
         

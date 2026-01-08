@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <title>My Custom Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --glass-bg: rgba(200, 230, 255, 0.2);
+            --glass-bt: solid 2px rgba(255, 255, 255, 0.4);
+            --glass-bl: solid 2px rgba(255, 255, 255, 0.3);
+            --glass-bf: blur(6px);
+        }
+        body {
+            overflow: hidden;
+            background: url('https://wallpapercave.com/wp/wp3215796.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        #telacheia {
+            background: transparent;
+            height: 15vh;
+            width: 50vw;
+            position: absolute;
+            transform: translateX(-50%);
+            left: 50%;
+        }
+        #esquerda, #direita {
+            background: transparent;
+            height: 50vh;
+            width: 15vh;
+            position: absolute;
+            transform: translate(-100%, -50%);
+            left: 100%;
+            top: 50%;
+        }
+        
+        #informacao {
+            width: 100vw;
+            position: absolute;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5vh;
+            z-index: -1;
+            
+            color: white;
+            font-family: "JetBrains Mono", monospace;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            font-size: large;
+        }
+        
+        .display {
+            position: absolute;
+            transform: translate(0%, -50%);
+            left: 100%;
+            top: 50%;
+        }
+        
+        #relogio {
+            display: flex;
+            gap: 3vh;
+        }
+        .horas, .minutos {
+            height: 55vh;
+            aspect-ratio: 1;
+            
+            background-color: var(--glass-bg);
+            border-top: var(--glass-bt);
+            border-left: var(--glass-bl);
+            backdrop-filter: var(--glass-bf);
+            border-radius: 3vh;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5vh;
+            overflow: hidden;
+        }
+        .oswald-text {
+            color: white;
+            font-family: "Oswald", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-style: normal;
+            font-size: 48vh;
+            transform: translateY(-1.5vh) scaleY(1.1);
+            text-shadow: 3px 3px rgba(0, 0, 100, 0.05);
+        }
+        
+        #codigo {
+            height: 70vh;
+            width: 70vw;
+            
+            background-color: var(--glass-bg);
+            border-top: var(--glass-bt);
+            border-left: var(--glass-bl);
+            backdrop-filter: var(--glass-bf);
+            border-radius: 3vh;
+            
+            display: flex;
+            flex-direction: column;
+            padding: 2vh;
+            gap: 1.5vh;
+        }
+        #codigo .topo div {
+            height: 3.5vh;
+            aspect-ratio: 1;
+            border-radius: 50%;
+        }
+        #codigo .editor {
+            height: 61vh;
+            width: 100%;
+            padding: 2vh;
+            border-radius: 1.5vh;
+            
+            background: #232427;
+            color: white;
+            font-family: "JetBrains Mono", monospace;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            font-size: x-large;
+            overflow-x: auto;
+            overflow-y: auto;
+        }
+        .editor:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <button id="telacheia"></button>
+    <button id="direita" onclick="trocarDisplay()"></button>
+    
+    <div id="informacao">
+        <p class="data"></p>
+        <p class="bateria"></p>
+    </div>
+    
+    <div id="relogio" class="display">
+        <div class="horas">
+            <p class="oswald-text"></p>
+        </div>
+        <div class="minutos">
+            <p class="oswald-text"></p>
+        </div>            
+    </div>
+
+    <div id="codigo" class="display">
+        <div class="topo" style="display: flex; gap: 1.5vh;">
+            <div style="background: #FF5F57;"></div>
+            <div style="background: #FFBD2E;"></div>
+            <div style="background: #28C840;"></div>
+        </div>
+        <div class="editor" contenteditable="true"></div>
+    </div>
+    
+    
+    <script>
+        
+        // BOTÃO DE TELA CHEIA
+        
+        const tela_cheia = document.getElementById('telacheia');
+        
+        tela_cheia.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        })
+
+        // DISPLAY RELÓGIO        
+        
+        const p_horas = document.getElementsByClassName('oswald-text')[0];
+        const p_minutos = document.getElementsByClassName('oswald-text')[1];
+        
+        function atualizarRelogio() {
+            let agora = new Date();
+            
+            let horas = String(agora.getHours()).padStart(2, '0');
+            let minutos = String(agora.getMinutes()).padStart(2, '0');
+            
+            p_horas.innerHTML = horas;
+            p_minutos.innerHTML = minutos;
+        }
+        
+        atualizarRelogio();
+        setInterval(atualizarRelogio, 1000);
+        
+        // BOTÃO DE TROCAR DISPLAY
+        
+        let display_atual = 0;
+        const lista_display = document.getElementsByClassName('display');
+        
+        function atualizarDisplay() {
+            lista_display[display_atual].style.left = "50%";
+            lista_display[display_atual].style.transform = "translate(-50%, -50%)";
+        }
+        
+        atualizarDisplay();
+        
+        function trocarDisplay() {
+            lista_display[display_atual].style.left = "100%";
+            lista_display[display_atual].style.transform = "translate(0%, -50%)";
+            
+            display_atual += 1;
+            display_atual = (display_atual == lista_display.length) ? 0 : display_atual;
+            
+            atualizarDisplay();
+        }
+        
+        // DISPLAY CÓDIGO
+        
+        const editor = document.getElementsByClassName('editor')[0];
+        editor.innerHTML = localStorage.getItem('texto');
+        
+        function salvarTexto() {
+            let texto = editor.innerHTML;
+            localStorage.setItem('texto', texto);
+        }
+        
+        setInterval(salvarTexto, 5000)
+        
+        // BARRA DE INFORMAÇÃO
+        
+        const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+        const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+        
+        const p_data = document.getElementsByClassName('data')[0];
+        const p_bateria = document.getElementsByClassName('bateria')[0];
+        let bateria = 0;
+        
+        function atualizarInformacao() {
+            let agora = new Date();
+            
+            let agora_dia = dias[agora.getDay()];
+            let agora_mes = meses[agora.getMonth()];
+            
+            p_data.innerHTML = `${agora_dia} ${agora.getDate()} ${agora_mes}`;
+            
+            navigator.getBattery().then((battery) => { 
+                bateria = Math.round(battery.level * 100);
+                p_bateria.innerHTML = bateria + "% " + nivelBateria(bateria); 
+            });
+        }
+        
+        atualizarInformacao();
+        setInterval(atualizarInformacao, 5000);
+        
+        function nivelBateria(porcentagem) {
+            if (porcentagem < 10) { 
+                return "░░░░░";
+            } else if (porcentagem < 30) {
+                return "█░░░░";
+            } else if (porcentagem < 50) {
+                return "██░░░";
+            } else if (porcentagem < 70) {
+                return "███░░";
+            } else if (porcentagem < 90) {
+                return "████░";
+            } else {
+                return "█████";
+            }
+        }
+        
+    </script>
+</body>
+</html>

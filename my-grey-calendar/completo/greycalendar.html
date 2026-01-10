@@ -19,6 +19,7 @@
         }
         body {
             background: var(--color2);
+            overflow-x: hidden;
         }
         #info {
             color: var(--color1);
@@ -38,8 +39,10 @@
             color: var(--color1);
             width: 100vw;
             padding: 5vw 8vw;
+            
             display: flex;
             flex-direction: column;
+            
             font-family: Sans-Serif;
             font-size: large;
         }
@@ -49,6 +52,7 @@
         .weekdays {
             display: grid;
             grid-template-columns: repeat(7, calc(100% / 7));
+            
             border: solid 1px var(--color4);
             border-bottom: none;
         }
@@ -56,40 +60,107 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            
             border: solid 1px var(--color4);
             border-bottom: none;
             padding: 5%;
+            
             font-size: large;
         }
         .grid {
             background: var(--color4);
+            
             display: grid;
             grid-template-columns: repeat(7, calc(100% / 7));
             grid-template-rows: repeat(6, auto);
+            
             border: solid 1px var(--color4);
         }
         .day {
+            --note-degree: 0deg;
+            --note-color: transparent;
+            
             background: var(--color2);
-            aspect-ratio: 1;
             border: solid 1px var(--color4);
+            position: relative;
             padding: 5%;
+            aspect-ratio: 1;
+            
             font-size: medium;
+        }
+        .day::before {
+            background: var(--note-color);
+            transform: rotateZ(var(--note-degree));
+            
+            content: "";
+            position: absolute;
+            inset: 2%;
+            pointer-events: none;
+        }
+        #editor {
+            background-color: rgba(0, 0, 0, 0.2);
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            
+            display: none;
+            justify-content: center;
+            padding: 10vh 0;
+            
+            font-family: Monospace;
+        }
+        #editor .note {
+            background: var(--color2);
+            color: var(--color1);
+            height: 20vh;
+            width: 80vw;
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 5vw;
+            gap: 2vh;
+        }
+        .text-input {
+            height: 100%;
+            width: 100%;
+            box-shadow: inset 0 0 5px var(--color4);
+            padding: 1vw 5px;
+            font-size: large;
+            outline: none;
+            overflow-y: auto;
+        }
+        .button-div {
+            display: flex;
+            justify-content: flex-end;
+            gap: 5vh;
+        }
+        .button-div button {
+            color: var(--color1);
+            font-family: Sans-Serif;
         }
     </style>
 </head>
 <body>
-    <section id="main">   
-        <!-- Implementado em script -->
-    </section>
+    <section id="main"></section>
     <section id="info">
         <hr>
         <br>
         <h2>grey calendar</h2>
         <br>
-        <p>© 2026 – Luís Dantas Marinho</p>
+        <p>© 2026 – Luís D. Marinho</p>
         <a href="https://github.com/LuisDan29">GitHub</a>
     </section>
-    
+    <div id="editor">
+        <div class="note">
+            <div class="text-input" contenteditable="true"></div>
+            <div class="button-div">
+                <button id="delete-button" onclick="deleteNote()">DELETAR</button>
+                <button id="save-button" onclick="saveNote()">SALVAR</button>
+            </div>
+        </div>
+    </div>
     <script>
         const YEAR = 2026;
         const DAYS = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
@@ -99,14 +170,90 @@
         ];
         const MAIN_SECTION = document.getElementById('main');
         
+        // localStorage.clear();
+        const KEY_NAME = 'greycalendar-data';
+        const CALENDAR_DATA = getCalendarData();
+        
+        let CURRENT_DAY = { yearmonth: '', day: 0 };
+        const EDITOR = document.getElementById('editor');
+        const TEXT_INPUT = document.getElementsByClassName('text-input')[0];
+        
+        function openNote(yearmonth, day) {
+            // mostra a div do editor
+            EDITOR.style.display = 'flex';
+            // salva as infos do dia sendo editado
+            CURRENT_DAY["yearmonth"] = yearmonth;
+            CURRENT_DAY["day"] = day;
+            // carrega texto existente da div
+            loadNoteText(yearmonth, day);   
+        }
+        
+        function loadNoteText(yearmonth, day) {
+            const data = CALENDAR_DATA[yearmonth][day];
+            TEXT_INPUT.textContent = data;
+            if (!data) {
+                TEXT_INPUT.textContent = '';
+            }
+        }
+        
+        function closeNote() {
+            EDITOR.style.display = 'none';
+        }
+        
+        function saveNote() {
+            const yearmonth = CURRENT_DAY["yearmonth"];
+            const day = CURRENT_DAY["day"];
+            const text = TEXT_INPUT.textContent;
+            
+            // Garante que o mês existe no objeto
+            if (!CALENDAR_DATA[yearmonth]) {
+                CALENDAR_DATA[yearmonth] = {};
+            }
+            
+            CALENDAR_DATA[yearmonth][day] = text;
+            
+            // Envia alterações pro localStorage
+            setCalendarData();
+            closeNote();
+        }
+        
+        function deleteNote() {
+            const yearmonth = CURRENT_DAY["yearmonth"];
+            const day = CURRENT_DAY["day"];
+            
+            delete CALENDAR_DATA[yearmonth][day];
+            
+            setCalendarData();
+            closeNote();
+        }
+        
+        function getCalendarData() {
+            // procura dados no localStorage
+            const data = JSON.parse(localStorage.getItem(KEY_NAME)) || {};
+            // cria configuração inicial se nao existir
+            if (Object.keys(data).length === 0) {
+                for (let month = 0; month < 12; month++) {
+                    let yearmonth = `${ YEAR }-${ month.toString().padStart(2, "0") }`;
+                    data[yearmonth] = {};
+                }
+            }
+            return data;
+        }
+        
+        function setCalendarData() {
+            // envia a constante CALENDAR_DATA para localStorage
+            const data = JSON.stringify(CALENDAR_DATA);
+            localStorage.setItem(KEY_NAME, data);
+        }
+        
+        createCalendar();
         function createCalendar() {
+            // incializa div's para cada mes
             for (let month = 0; month < 12; month++) {
                 const monthElement = createMonth(YEAR, month);
                 MAIN_SECTION.appendChild(monthElement);
             }
         }
-        
-        createCalendar();
         
         function createMonth(year, month) {
             // configurações da div 'month'
@@ -114,13 +261,16 @@
             monthDiv.classList.add('month');
             monthDiv.dataset.month = month;
             monthDiv.dataset.year = year;
+            
             // configurações do h1 'title'
             const title = document.createElement('h1');
             title.textContent = MONTHS[month];
             title.classList.add('title');
+            
             // cria os dias da semana e o grid
             const weekdays = createWeekdays();
             const grid = createGrid(year, month);
+            
             // monta a div 'month'
             monthDiv.appendChild(title);
             monthDiv.appendChild(weekdays);
@@ -131,8 +281,10 @@
         function createGrid(year, month) {
             const grid = document.createElement('div');
             grid.classList.add('grid');
+            
             // pega [dia da semana 0-6, qntd de dias]
             const [startDay, totalDays] = getDaysInMonth(year, month);
+            
             // cria div's vazias no inicio do grid
             for (let i = 0; i < startDay; i++) {
                 grid.appendChild(createEmptyDiv()); 
@@ -146,13 +298,27 @@
         }
         
         function createDay(year, month, day) {
+            const yearmonth = `${ YEAR }-${ month.toString().padStart(2, "0") }`;
+            
             const div = document.createElement('div');
-            div.classList.add('day');
+            div.classList.add('day', yearmonth, day);
+            
+            // ao clicar, abre o editor de nota
+            div.addEventListener('click', () => { 
+                openNote(yearmonth, day); 
+            });
+            
             div.innerHTML = `<p>${day}</p>`;
+            
+            // calcula grau de inclinação aleatório para day::before
+            let degree = (Math.random() * 6 - 3).toFixed(2);
+            div.style.setProperty('--note-degree', `${degree}deg`);
+            
             return div;
         }
         
         function createEmptyDiv() {
+            // cria div's vazias
             const div = document.createElement('div');
             div.classList.add('empty');
             return div;

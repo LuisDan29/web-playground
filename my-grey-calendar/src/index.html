@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>grey calendar</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grey calendar</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     
@@ -17,9 +17,19 @@
         <br>
         <h2>grey calendar</h2>
         <br>
-        <p>© 2026 – Luís Dantas Marinho</p>
+        <p>© 2026 – Luís D. Marinho</p>
         <a href="https://github.com/LuisDan29">GitHub</a>
     </section>
+    
+    <div id="editor">
+        <div class="note">
+            <div class="text-input" contenteditable="true"></div>
+            <div class="button-div">
+                <button id="delete-button" onclick="deleteNote()">DELETAR</button>
+                <button id="save-button" onclick="saveNote()">SALVAR</button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
